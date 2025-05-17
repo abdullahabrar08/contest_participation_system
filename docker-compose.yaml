@@ -1,22 +1,18 @@
+version: "3.8"
+
 services:
-  api:
-    container_name: express-app
-    image: express-app
-    ports:
-      - 4000:4000
-
-  otel-collector:
-    container_name: otel-collector
-    image: otel/opentelemetry-collector:latest
-
-  jaeger:
-    container_name: jaeger
-    image: jaegertracing/all-in-one:latest
-
-  db:
-    image: postgres:15-alpine
-    container_name: postgres
+  postgres:
+    image: postgres:15
+    container_name: postgres-db
     environment:
-      - POSTGRES_USER=intelparcel
-      - POSTGRES_PASSWORD=IntelParcel@21
-      - POSTGRES_DB=intelparcel_db
+      POSTGRES_USER: contest
+      POSTGRES_PASSWORD: Contest@21
+      POSTGRES_DB: contest_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

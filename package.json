@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon index.js",
+    "start:dev": "NODE_ENV=development node index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +17,23 @@
   "bugs": {
     "url": "https://github.com/abdullahabrar08/contest_participation_system/issues"
   },
-  "homepage": "https://github.com/abdullahabrar08/contest_participation_system#readme"
+  "homepage": "https://github.com/abdullahabrar08/contest_participation_system#readme",
+  "dependencies": {
+    "casbin": "^5.38.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.1.0",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.10",
+    "pg": "^8.16.0",
+    "swagger-ui-express": "^5.0.1",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "node-pg-migrate": "^7.9.1"
+  }
 }
