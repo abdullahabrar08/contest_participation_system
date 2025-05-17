@@ -21,7 +21,7 @@ const createUserRequest = Joi.object({
     "string.max": "Password must be at most 128 characters long.",
   }),
 
-  role_id: Joi.number().integer().min(1).required().messages({
+  role_id: Joi.number().integer().valid(1, 2, 3).min(1).required().messages({
     "number.base": "Role ID must be a number.",
     "number.integer": "Role ID must be an integer.",
     "number.min": "Role ID must be a positive integer.",
