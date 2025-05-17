@@ -1,0 +1,19 @@
+{
+  "name": "contest_participation_system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abdullahabrar08/contest_participation_system.git"
+  },
+  "author": "abdullah abrar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abdullahabrar08/contest_participation_system/issues"
+  },
+  "homepage": "https://github.com/abdullahabrar08/contest_participation_system#readme"
+}
