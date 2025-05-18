@@ -1,46 +1,43 @@
-// queries/userQueries.js
+const { pool } = require("../index");
+const bcrypt = require("bcrypt");
 
-// Retrieve user by their ID
-// @params: $1 -> userId
-const getUserById = `
-  SELECT id, username, email FROM users WHERE id = $1;
-`;
+const findUserByEmail = async (email) => {
+  try {
+    const query = `SELECT * FROM users WHERE email = $1`;
+    const values = [email];
 
-// Fetch all users from the users table
-const getAllUsers = `
-  SELECT id, username, email FROM users;
-`;
+    const { rows } = await pool.query(query, values);
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+};
 
-// Create a new user
-// @params: $1 -> username, $2 -> email
-// Returns the newly created user's id, username, and email.
-const createUser = `
-  INSERT INTO users (username, email)
-  VALUES ($1, $2)
-  RETURNING id, username, email;
-`;
+const createUser = async ({ username, email, password, roleId }) => {
+  try {
+    const query = `INSERT INTO users (username, email, password_hash, role_id) VALUES ($1, $2, $3, $4) RETURNING *`;
+    const values = [username, email, await bcrypt.hash(password, 10), roleId];
 
-// Update a user's email by their ID
-// @params: $1 -> newEmail, $2 -> userId
-// Returns the updated user's id, username, and email.
-const updateUserEmail = `
-  UPDATE users
-  SET email = $1
-  WHERE id = $2
-  RETURNING id, username, email;
-`;
+    const { rows } = await pool.query(query, values);
+    return rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
 
-// Delete a user by their ID
-// @params: $1 -> userId
-// Returns the count of rows affected.
-const deleteUser = `
-  DELETE FROM users WHERE id = $1;
-`;
+const updateLastLogin = async (userId) => {
+  try {
+    const query = `UPDATE users SET last_login = NOW() WHERE user_id = $1`;
+    const values = [userId];
+
+    await pool.query(query, values);
+  } catch (error) {
+    throw error;
+  }
+};
 
 module.exports = {
-  getUserById,
-  getAllUsers,
+  findUserByEmail,
   createUser,
-  updateUserEmail,
-  deleteUser,
+  updateLastLogin,
 };

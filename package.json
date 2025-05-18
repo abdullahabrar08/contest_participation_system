@@ -7,7 +7,7 @@
     "dev": "nodemon index.js",
     "start:dev": "NODE_ENV=development node index",
     "test": "echo \"Error: no test specified\" && exit 1",
-     "migrate": "node db/index.js"
+    "migrate": "node db/index.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/abdullahabrar08/contest_participation_system#readme",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "casbin": "^5.38.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
