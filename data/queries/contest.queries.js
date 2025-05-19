@@ -273,6 +273,63 @@ const getPrizeHistory = async (userId, { page, size }) => {
   }
 };
 
+const getContestForPrizeDistribution = async () => {
+  try {
+    const query = `
+      SELECT *
+      FROM contests
+      WHERE end_time >= NOW() - INTERVAL '5 minutes'
+        AND end_time <= NOW()
+    `;
+
+    const result = await pool.query(query);
+    return result.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const distributePrizes = async (contests) => {
+  try {
+    for (let i = 0; i < contests.length; i++) {
+      const contestId = contests[i].contest_id;
+
+      // Get Prize for the contest
+      const prizeResult = await pool.query({
+        text: `
+        SELECT prize_id FROM prizes
+        WHERE contest_id = $1
+      `,
+        values: [contestId],
+      });
+
+      // Get winner for the contest
+      const winnerResult = await pool.query({
+        text: `
+        SELECT user_id FROM leaderboard
+        WHERE contest_id = $1
+        ORDER BY score DESC
+        LIMIT 1
+      `,
+        values: [contestId],
+      });
+
+      const winnerId = winnerResult.rows[0].user_id;
+      const prizeId = prizeResult.rows[0].prize_id;
+
+      // Insert into user_prizes
+      const insertQuery = `
+        INSERT INTO user_prizes (user_id, contest_id, prize_id)
+        VALUES ($1, $2, $3)
+      `;
+      const insertValues = [winnerId, contestId, prizeId];
+      await pool.query(insertQuery, insertValues);
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   createContest,
   findContestByName,
@@ -287,4 +344,6 @@ module.exports = {
   getPendingContests,
   getHistory,
   getPrizeHistory,
+  getContestForPrizeDistribution,
+  distributePrizes,
 };

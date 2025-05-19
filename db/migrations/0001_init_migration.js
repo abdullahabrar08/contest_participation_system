@@ -155,6 +155,10 @@ exports.up = (pgm) => {
     },
   });
 
+  pgm.addConstraint("user_prizes", "user_prizes_unique_user_prize_contest", {
+    unique: ["user_id", "contest_id", "prize_id"],
+  });
+
   // Create leaderboard table
   pgm.createTable("leaderboard", {
     leaderboard_id: {

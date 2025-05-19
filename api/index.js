@@ -8,6 +8,7 @@ const { setupSwaggerDocs } = require("../docs/swagger");
 const { api } = require("../config");
 const logger = require("../utils/logger");
 const { notFound, errorMiddleware } = require("./middlewares/error.middleware");
+require("../jobs/index");
 
 const configureAPI = (app) => {
   app.use(express.json());
