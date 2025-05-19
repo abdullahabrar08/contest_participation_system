@@ -89,7 +89,7 @@ const findQuestionByName = async (questionText) => {
 const getContestQuestions = async (req) => {
   try {
     const { contestId } = req.query;
-    const { role_id: roleId } = req.user;
+    const { role_id: roleId, user_id: userId } = req.user;
 
     // check if contest exists
     const contest = await contestQueries.findContestById(contestId);
@@ -109,12 +109,12 @@ const getContestQuestions = async (req) => {
     }
 
     // check if user is allowed to participate in the contest
-    const isContestParticipant = await contestQueries.isContestParticipant(
+    const isContestSubmitted = await contestQueries.isContestSubmitted(
       contestId,
-      req.user.user_id
+      userId
     );
-    if (isContestParticipant.length > 0) {
-      throw new Error("You have already participated in this contest");
+    if (isContestSubmitted.length > 0) {
+      throw new Error("You have already submitted answers for this contest");
     }
 
     // get questions

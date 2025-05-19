@@ -185,6 +185,94 @@ const isContestStarted = async (contestId) => {
   }
 };
 
+const joinContest = async (contestId, userId) => {
+  try {
+    const query = `
+      INSERT INTO user_contests (contest_id, user_id)
+      VALUES ($1, $2)
+      RETURNING *
+    `;
+    const values = [contestId, userId];
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
+const isContestSubmitted = async (contestId, userId) => {
+  try {
+    const query = `
+      SELECT * FROM user_contests  
+      WHERE contest_id = $1 AND user_id = $2 AND is_submitted = true
+    `;
+    const values = [contestId, userId];
+    const result = await pool.query(query, values);
+    return result.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getPendingContests = async (userId, { page, size }) => {
+  try {
+    const query = `
+      SELECT uc.contest_id, c.contest_name, c.description, c.start_time, c.end_time, c.is_vip_only
+      FROM user_contests uc
+      JOIN contests c ON uc.contest_id = c.contest_id
+      WHERE uc.user_id = $1 AND uc.is_submitted = false
+      LIMIT $3
+      OFFSET ($2 - 1) * $3
+    `;
+    const values = [userId, page, size];
+    const result = await pool.query(query, values);
+    return result.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getHistory = async (userId, { page, size }) => {
+  try {
+    const query = `
+      SELECT c.contest_id, c.contest_name, c.description, c.start_time, c.end_time, l.score, pr.prize_name, pr.description AS prize_description
+      FROM leaderboard l
+      INNER JOIN contests c ON l.contest_id = c.contest_id
+      LEFT JOIN user_prizes p ON l.user_id = p.user_id AND l.contest_id = p.contest_id
+      LEFT JOIN prizes pr ON p.contest_id = pr.contest_id
+      WHERE l.user_id = $1
+      ORDER BY l.contest_id DESC
+      LIMIT $3
+      OFFSET ($2 - 1) * $3
+    `;
+    const values = [userId, page, size];
+    const result = await pool.query(query, values);
+    return result.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getPrizeHistory = async (userId, { page, size }) => {
+  try {
+    const query = `
+      SELECT p.contest_id, c.contest_name, pr.prize_name, pr.description AS prize_description, p.awarded_at
+      FROM user_prizes p
+      INNER JOIN contests c ON p.contest_id = c.contest_id
+      INNER JOIN prizes pr ON p.contest_id = pr.contest_id
+      WHERE p.user_id = $1
+      ORDER BY p.awarded_at DESC
+      LIMIT $3
+      OFFSET ($2 - 1) * $3
+    `;
+    const values = [userId, page, size];
+    const result = await pool.query(query, values);
+    return result.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   createContest,
   findContestByName,
@@ -194,4 +282,9 @@ module.exports = {
   isContestParticipant,
   isContestActive,
   isContestStarted,
+  joinContest,
+  isContestSubmitted,
+  getPendingContests,
+  getHistory,
+  getPrizeHistory,
 };

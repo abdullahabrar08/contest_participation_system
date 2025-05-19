@@ -1,4 +1,5 @@
 const userQueries = require("../data/queries/user.queries");
+const contestQueries = require("../data/queries/contest.queries");
 const userDTO = require("../data/dto/user.dto");
 const { signToken } = require("../utils/helpers");
 const bcrypt = require("bcrypt");
@@ -74,7 +75,37 @@ const login = async (req) => {
   }
 };
 
+const getHistory = async (req) => {
+  try {
+    const data = req.query;
+    const { user_id: userId } = req.user;
+
+    // get history
+    const contests = await contestQueries.getHistory(userId, data);
+
+    return userDTO.getHistoryDTO(contests);
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getPrizeHistory = async (req) => {
+  try {
+    const data = req.query;
+    const { user_id: userId } = req.user;
+
+    // get prize history
+    const prizes = await contestQueries.getPrizeHistory(userId, data);
+
+    return userDTO.prizesDTO(prizes);
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   register,
   login,
+  getHistory,
+  getPrizeHistory,
 };

@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const { pool } = require("../../data/index");
 const { ROLE_NAMES } = require("../../utils/constants");
 const { newEnforcer } = require("casbin");
 const Queries = require("../../data/queries/user.queries");

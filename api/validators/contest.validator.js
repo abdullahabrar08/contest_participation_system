@@ -31,8 +31,19 @@ const getContestRequest = Joi.object({
   size: Joi.number().integer().max(10).required(),
 }).required();
 
+const joinContestRequest = Joi.object({
+  contestId: Joi.number().integer().required(),
+}).required();
+
+const getPendingSubmissionsRequest = Joi.object({
+  page: Joi.number().integer().min(1).required(),
+  size: Joi.number().integer().max(10).required(),
+}).required();
+
 module.exports = {
   createContestRequest,
   updateContestRequest,
   getContestRequest,
+  joinContestRequest,
+  getPendingSubmissionsRequest,
 };

@@ -48,14 +48,9 @@ const addSubmission = async (userId, submission, score) => {
     await pool.query("BEGIN");
 
     const userContest = await pool.query(
-      `INSERT INTO user_contests (user_id, contest_id, score)
-                     VALUES ($1, $2, $3) RETURNING user_contest_id`,
-      [userId, contestId, score]
+      `SELECT user_contest_id FROM user_contests WHERE user_id = $1 AND contest_id = $2`,
+      [userId, contestId]
     );
-
-    if (userContest.rowCount === 0) {
-      throw new Error("Failed to insert into user_contests table");
-    }
 
     const userContestId = userContest.rows[0].user_contest_id;
 
@@ -70,6 +65,18 @@ const addSubmission = async (userId, submission, score) => {
     );
 
     await pool.query(insertQuery);
+
+    const leaderboardQuery = `
+      INSERT INTO leaderboard (contest_id, user_id, score)
+      VALUES ($1, $2, $3)
+    `;
+    const leaderboardValues = [contestId, userId, score];
+    await pool.query(leaderboardQuery, leaderboardValues);
+
+    await pool.query(
+      `UPDATE user_contests SET is_submitted = true WHERE user_contest_id = $1`,
+      [userContestId]
+    );
 
     await pool.query("COMMIT");
     return true;

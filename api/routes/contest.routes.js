@@ -42,4 +42,26 @@ ContestAPIRouter.get(
   ContestController.getContests
 );
 
+ContestAPIRouter.put(
+  "/join",
+  authenticate,
+  authorize,
+  validationMiddleware(
+    ContestValidator.joinContestRequest,
+    HTTP_REQUEST_ATTRIBUTES.QUERY
+  ),
+  ContestController.joinContest
+);
+
+ContestAPIRouter.get(
+  "/pending-submissions",
+  authenticate,
+  authorize,
+  validationMiddleware(
+    ContestValidator.getPendingSubmissionsRequest,
+    HTTP_REQUEST_ATTRIBUTES.QUERY
+  ),
+  ContestController.getPendingContests
+);
+
 module.exports = ContestAPIRouter;

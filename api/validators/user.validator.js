@@ -44,7 +44,57 @@ const createLoginRequest = Joi.object({
   }),
 }).required();
 
+const createHistoryRequest = Joi.object({
+  page: Joi.number()
+    .integer()
+    .min(1)
+    .messages({
+      "number.base": "Page must be a number.",
+      "number.integer": "Page must be an integer.",
+      "number.min": "Page must be at least 1.",
+    })
+    .required(),
+
+  size: Joi.number()
+    .integer()
+    .min(1)
+    .max(100)
+    .messages({
+      "number.base": "Size must be a number.",
+      "number.integer": "Size must be an integer.",
+      "number.min": "Size must be at least 1.",
+      "number.max": "Size must be at most 100.",
+    })
+    .required(),
+}).required();
+
+const createPrizeHistoryRequest = Joi.object({
+  page: Joi.number()
+    .integer()
+    .min(1)
+    .messages({
+      "number.base": "Page must be a number.",
+      "number.integer": "Page must be an integer.",
+      "number.min": "Page must be at least 1.",
+    })
+    .required(),
+
+  size: Joi.number()
+    .integer()
+    .min(1)
+    .max(100)
+    .messages({
+      "number.base": "Size must be a number.",
+      "number.integer": "Size must be an integer.",
+      "number.min": "Size must be at least 1.",
+      "number.max": "Size must be at most 100.",
+    })
+    .required(),
+}).required();
+
 module.exports = {
   createUserRequest,
   createLoginRequest,
+  createHistoryRequest,
+  createPrizeHistoryRequest,
 };

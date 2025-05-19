@@ -8,6 +8,10 @@ p, ADMIN, /api/v1/contests/, GET
 p, VIP, /api/v1/contests/, GET
 p, NORMAL, /api/v1/contests/, GET
 
+# Join Contest
+p, VIP, /api/v1/contests/join, PUT
+p, NORMAL, /api/v1/contests/join, PUT
+
 # Add Question
 p, ADMIN, /api/v1/questions/, POST
 p, ADMIN, /api/v1/questions/, GET
@@ -18,3 +22,14 @@ p, NORMAL, /api/v1/questions/, GET
 p, NORMAL, /api/v1/submissions/, POST
 p, VIP, /api/v1/submissions/, POST
 
+# Get In-Progress Contests 
+p, NORMAL, /api/v1/contests/pending-submissions, GET
+p, VIP, /api/v1/contests/pending-submissions, GET
+
+# History
+p, NORMAL, /api/v1/users/history, GET
+p, VIP, /api/v1/users/history, GET
+
+# Prizes 
+p, NORMAL, /api/v1/users/prizes, GET
+p, VIP, /api/v1/users/prizes, GET

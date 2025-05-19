@@ -19,12 +19,12 @@ const submitAnswers = async (req) => {
     }
 
     // check if user is allowed to participate in the contest
-    const isContestParticipant = await contestQueries.isContestParticipant(
+    const isContestSubmitted = await contestQueries.isContestSubmitted(
       data.contestId,
       userId
     );
-    if (isContestParticipant.length > 0) {
-      throw new Error("You have already participated in this contest");
+    if (isContestSubmitted.length > 0) {
+      throw new Error("You have already submitted answers for this contest");
     }
 
     // check if contest is active either not started or already ended

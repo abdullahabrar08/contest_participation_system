@@ -286,9 +286,9 @@ exports.up = (pgm) => {
       type: "timestamptz",
       default: pgm.func("CURRENT_TIMESTAMP"),
     },
-    score: {
-      type: "integer",
-      notNull: true,
+    is_submitted: {
+      type: "boolean",
+      default: false,
     },
   });
 

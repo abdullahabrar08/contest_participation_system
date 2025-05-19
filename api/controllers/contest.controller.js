@@ -42,8 +42,38 @@ const getContests = async (req, res, next) => {
   }
 };
 
+const joinContest = async (req, res, next) => {
+  try {
+    const contest = await contestService.joinContest(req);
+
+    return res.status(200).send({
+      responseCode: 2000,
+      message: "Contest joined Successfully",
+      data: contest,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getPendingContests = async (req, res, next) => {
+  try {
+    const contests = await contestService.getPendingContests(req);
+
+    return res.status(200).send({
+      responseCode: 2000,
+      message: "Contests",
+      data: contests,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createContest,
   updateContest,
   getContests,
+  joinContest,
+  getPendingContests,
 };
