@@ -1,0 +1,121 @@
+CREATE TABLE public.users (
+	user_id serial4 NOT NULL,
+	username varchar(100) NOT NULL,
+	email varchar(255) NOT NULL,
+	password_hash varchar(255) NOT NULL,
+	role_id int4 NOT NULL,
+	created_at timestamptz NULL DEFAULT CURRENT_TIMESTAMP,
+	last_login timestamptz NULL,
+	CONSTRAINT users_email_key UNIQUE (email),
+	CONSTRAINT users_pkey PRIMARY KEY (user_id),
+	CONSTRAINT users_role_id_fkey FOREIGN KEY (role_id) REFERENCES public.roles(role_id) ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE TABLE public.roles (
+	role_id serial4 NOT NULL,
+	role_name varchar(50) NOT NULL,
+	created_at timestamptz NULL DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT roles_pkey PRIMARY KEY (role_id),
+	CONSTRAINT roles_role_name_key UNIQUE (role_name)
+);
+
+CREATE TABLE public.contests (
+	contest_id serial4 NOT NULL,
+	contest_name varchar(255) NOT NULL,
+	description text NULL,
+	start_time timestamptz NOT NULL,
+	end_time timestamptz NOT NULL,
+	is_vip_only bool NULL DEFAULT false,
+	max_score int4 NULL,
+	created_at timestamptz NULL DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT check_end_time_after_start_time CHECK ((end_time > start_time)),
+	CONSTRAINT contests_pkey PRIMARY KEY (contest_id)
+);
+
+CREATE TABLE public.questions (
+	question_id serial4 NOT NULL,
+	contest_id int4 NOT NULL,
+	question_text text NOT NULL,
+	question_type_id int4 NOT NULL,
+	points int4 NOT NULL,
+	created_at timestamptz NULL DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT questions_pkey PRIMARY KEY (question_id),
+	CONSTRAINT questions_contest_id_fkey FOREIGN KEY (contest_id) REFERENCES public.contests(contest_id) ON DELETE CASCADE,
+	CONSTRAINT questions_question_type_id_fkey FOREIGN KEY (question_type_id) REFERENCES public.question_types(question_type_id)
+);
+
+CREATE TABLE public.question_types (
+	question_type_id serial4 NOT NULL,
+	type_name varchar(50) NOT NULL,
+	description text NULL,
+	CONSTRAINT question_types_pkey PRIMARY KEY (question_type_id),
+	CONSTRAINT question_types_type_name_key UNIQUE (type_name)
+);
+
+CREATE TABLE public.answers (
+	answer_id serial4 NOT NULL,
+	question_id int4 NOT NULL,
+	answer_text text NOT NULL,
+	is_correct bool NOT NULL,
+	created_at timestamptz NULL DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT answers_pkey PRIMARY KEY (answer_id),
+	CONSTRAINT answers_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.questions(question_id) ON DELETE CASCADE
+);
+
+CREATE TABLE public.user_contests (
+	user_contest_id serial4 NOT NULL,
+	user_id int4 NOT NULL,
+	contest_id int4 NOT NULL,
+	participation_time timestamptz NULL DEFAULT CURRENT_TIMESTAMP,
+	is_submitted bool NULL DEFAULT false,
+	CONSTRAINT unique_user_contest UNIQUE (user_id, contest_id),
+	CONSTRAINT user_contests_pkey PRIMARY KEY (user_contest_id),
+	CONSTRAINT user_contests_contest_id_fkey FOREIGN KEY (contest_id) REFERENCES public.contests(contest_id) ON DELETE CASCADE,
+	CONSTRAINT user_contests_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE public.user_submissions (
+	user_submission_id serial4 NOT NULL,
+	user_contest_id int4 NOT NULL,
+	question_id int4 NOT NULL,
+	answer_id int4 NOT NULL,
+	created_at timestamptz NULL DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT user_submissions_pkey PRIMARY KEY (user_submission_id),
+	CONSTRAINT user_submissions_answer_id_fkey FOREIGN KEY (answer_id) REFERENCES public.answers(answer_id) ON DELETE CASCADE,
+	CONSTRAINT user_submissions_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.questions(question_id) ON DELETE CASCADE,
+	CONSTRAINT user_submissions_user_contest_id_fkey FOREIGN KEY (user_contest_id) REFERENCES public.user_contests(user_contest_id) ON DELETE CASCADE
+);
+
+CREATE TABLE public.leaderboard (
+	leaderboard_id serial4 NOT NULL,
+	contest_id int4 NOT NULL,
+	user_id int4 NOT NULL,
+	score int4 NOT NULL,
+	created_at timestamptz NULL DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT leaderboard_pkey PRIMARY KEY (leaderboard_id),
+	CONSTRAINT leaderboard_contest_id_fkey FOREIGN KEY (contest_id) REFERENCES public.contests(contest_id) ON DELETE CASCADE,
+	CONSTRAINT leaderboard_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE public.prizes (
+	prize_id serial4 NOT NULL,
+	contest_id int4 NOT NULL,
+	prize_name varchar(255) NOT NULL,
+	description text NULL,
+	created_at timestamptz NULL DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT prizes_pkey PRIMARY KEY (prize_id),
+	CONSTRAINT prizes_contest_id_fkey FOREIGN KEY (contest_id) REFERENCES public.contests(contest_id) ON DELETE CASCADE
+);
+
+CREATE TABLE public.user_prizes (
+	user_prize_id serial4 NOT NULL,
+	user_id int4 NOT NULL,
+	prize_id int4 NOT NULL,
+	contest_id int4 NOT NULL,
+	awarded_at timestamptz NULL DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT user_prizes_pkey PRIMARY KEY (user_prize_id),
+	CONSTRAINT user_prizes_unique_user_prize_contest UNIQUE (user_id, contest_id, prize_id),
+	CONSTRAINT user_prizes_contest_id_fkey FOREIGN KEY (contest_id) REFERENCES public.contests(contest_id) ON DELETE CASCADE,
+	CONSTRAINT user_prizes_prize_id_fkey FOREIGN KEY (prize_id) REFERENCES public.prizes(prize_id) ON DELETE CASCADE,
+	CONSTRAINT user_prizes_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON DELETE CASCADE
+);
