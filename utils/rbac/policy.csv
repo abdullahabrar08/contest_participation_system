@@ -1,0 +1,20 @@
+# Add/Update Contest
+
+p, ADMIN, /api/v1/contests/, POST
+p, ADMIN, /api/v1/contests/, PUT
+
+# Get contests
+p, ADMIN, /api/v1/contests/, GET
+p, VIP, /api/v1/contests/, GET
+p, NORMAL, /api/v1/contests/, GET
+
+# Add Question
+p, ADMIN, /api/v1/questions/, POST
+p, ADMIN, /api/v1/questions/, GET
+p, VIP, /api/v1/questions/, GET
+p, NORMAL, /api/v1/questions/, GET
+
+# Submission
+p, NORMAL, /api/v1/submissions/, POST
+p, VIP, /api/v1/submissions/, POST
+

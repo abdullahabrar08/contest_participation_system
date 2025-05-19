@@ -36,8 +36,21 @@ const updateLastLogin = async (userId) => {
   }
 };
 
+const findUserById = async (userId) => {
+  try {
+    const query = `SELECT * FROM users WHERE user_id = $1`;
+    const values = [userId];
+
+    const { rows } = await pool.query(query, values);
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = {
   findUserByEmail,
   createUser,
   updateLastLogin,
+  findUserById,
 };
