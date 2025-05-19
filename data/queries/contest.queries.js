@@ -321,6 +321,7 @@ const distributePrizes = async (contests) => {
       const insertQuery = `
         INSERT INTO user_prizes (user_id, contest_id, prize_id)
         VALUES ($1, $2, $3)
+        ON CONFLICT (user_id, contest_id, prize_id) DO NOTHING
       `;
       const insertValues = [winnerId, contestId, prizeId];
       await pool.query(insertQuery, insertValues);
